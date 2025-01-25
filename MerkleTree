@@ -1,0 +1,28 @@
+const { MerkleTree } = require('merkletreejs');
+const SHA256 = require('crypto-js/sha256');
+
+
+const addresses = [
+    "0x5f8f11f24283fd7a2a84641de4c5290d914d3456", 
+    "0xa6d7d745212ac58c9c1b8b0ecae2b4e72a0e6a3c",  
+    "0x8d07d7b91d8a00ba9b635b87b75f5b8e264adf65",  
+    "0x9f6b7eaa9fa9f684fdd32f1c99db1ed6d85029e5",  
+    "0x0c6f7c3e774d71f72f3a92570be381913bd3d473" 
+];
+
+const leaves = addresses.map(addr => SHA256(addr).toString());
+
+
+const tree = new MerkleTree(leaves, SHA256);
+
+
+const root = tree.getRoot().toString('hex');
+
+console.log("Merkle Root:", root);
+
+
+const leaf = SHA256(addresses[0]).toString();
+const proof = tree.getProof(leaf);
+const isValid = tree.verify(proof, leaf, root);
+
+console.log(`Is the Merkle Proof valid for address ${addresses[0]}?`, isValid);
